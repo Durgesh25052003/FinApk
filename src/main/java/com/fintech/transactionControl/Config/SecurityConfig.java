@@ -28,7 +28,14 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/finApk/auth/**").permitAll().requestMatchers("/api/v1/finApk/test/**").hasAnyRole("ADMIN","VIEWER").requestMatchers("/api/v1/finApk/user/**").hasAnyRole("ADMIN" , "ANALYST") .requestMatchers("/api/v1/finApk/fin/**").hasAnyRole("ADMIN" , "ANALYST" , "VIEWER").requestMatchers("/api/v1/finApk/analytics/**").hasAnyRole("ADMIN" , "ANALYST" , "VIEWER")
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll().requestMatchers("/api/v1/finApk/auth/**").permitAll().requestMatchers("/api/v1/finApk/test/**").hasAnyRole("ADMIN","VIEWER").requestMatchers("/api/v1/finApk/user/**").hasAnyRole("ADMIN" , "ANALYST") .requestMatchers("/api/v1/finApk/fin/**").hasAnyRole("ADMIN" , "ANALYST" , "VIEWER").requestMatchers("/api/v1/finApk/analytics/**").hasAnyRole("ADMIN" , "ANALYST" , "VIEWER")
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
