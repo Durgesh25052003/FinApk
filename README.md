@@ -213,6 +213,16 @@ src/
     └── resources/
         └── application.properties  # H2 config for tests
 ```
+## API Documentation
+
+Swagger UI is available locally at:
+http://localhost:8080/swagger-ui.html
+
+All endpoints, request bodies and responses are documented there.
+A live deployment link is not provided — the application can be run
+locally by following the setup instructions above.
+
+
 
 ---
 
