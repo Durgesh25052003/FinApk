@@ -1,6 +1,6 @@
 # FinApk — Fintech Transaction Analyzer
 
-A RESTful backend API built with **Spring Boot** and **MySQL** for managing and analyzing financial transactions. Features JWT-based authentication, role-based access control (RBAC), financial record management, and dashboard summary endpoints.
+A RESTful backend API built with Spring Boot and MySQL for managing and analyzing financial transactions. Supports JWT authentication, role-based access control, financial record management, and dashboard summary endpoints.
 
 ---
 
@@ -44,11 +44,11 @@ CREATE DATABASE fintech_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ### 3. Configure environment variables
 
-Create an `application.properties` or set the following env vars:
+Create `src/main/resources/application.properties` with the following:
 
 ```properties
 # Database
-spring.datasource.url=jdbc:mysql://localhost:3306/fintech_db?useSSL=false&serverTimezone=UTC
+spring.datasource.url=jdbc:mysql://localhost:3306/fintech_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
 spring.datasource.username=YOUR_MYSQL_USERNAME
 spring.datasource.password=YOUR_MYSQL_PASSWORD
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
@@ -73,7 +73,7 @@ jwt.expiration=86400000
 
 The server starts at `http://localhost:8080`.
 
-Swagger UI is available at: `http://localhost:8080/swagger-ui.html`
+Swagger UI is available at `http://localhost:8080/swagger-ui.html`
 
 ---
 
@@ -162,23 +162,29 @@ All errors follow a consistent shape:
 
 ---
 
-## Assumptions & Tradeoffs
-
-- **Roles stored as MySQL ENUM** — simple and readable. Tradeoff: adding a new role requires a schema migration. A `roles` table would be more flexible for a production system.
-- **JWT is stateless** — no token revocation on logout. A token blacklist (Redis) would be needed for stricter security.
-- **Soft delete** on financial records (`deletedAt`) — records are never permanently removed, preserving audit history.
-- **Flyway migrations** manage all schema changes — `ddl-auto=validate` ensures Hibernate never silently alters the schema.
-- **H2 in-memory DB** is used for tests only, keeping tests fast and CI-friendly without needing a running MySQL instance.
-
----
-
 ## Running Tests
 
 ```bash
 ./mvnw test
 ```
 
-Tests use H2 in-memory database — no MySQL connection required to run the test suite.
+Tests use an H2 in-memory database — no MySQL connection needed to run the test suite. The test config lives in `src/test/resources/application.properties` and automatically overrides the main MySQL config during test runs.
+
+### What's tested
+
+- **AuthControllerTest** — register and login endpoints, validates correct JWT response and rejects missing fields with 400
+- **RbacControllerTest** — verifies that a VIEWER gets 403 when attempting to POST a record, and that an unauthenticated request gets 401
+- **FinancialRecordTest** — repository-level tests using `@DataJpaTest`, covers record filtering by date range, type aggregation (SUM of INCOME/EXPENSE), and category grouping
+
+---
+
+## Assumptions & Tradeoffs
+
+- **Roles stored as MySQL ENUM** — simple and readable. Tradeoff: adding a new role requires a schema migration. A `roles` table would be more flexible for a production system.
+- **JWT is stateless** — no token revocation on logout. A token blacklist (Redis) would be needed for stricter security in production.
+- **Soft delete on financial records** — records are never permanently removed via `deletedAt`, preserving audit history.
+- **Flyway migrations** manage all schema changes — `ddl-auto=validate` ensures Hibernate never silently alters the schema.
+- **H2 used only for tests** — keeps the test suite fast and portable without requiring a running MySQL instance.
 
 ---
 
@@ -187,7 +193,7 @@ Tests use H2 in-memory database — no MySQL connection required to run the test
 ```
 src/
 ├── main/
-│   ├── java/com/fintech/transactionControl
+│   ├── java/com/fintech/transactionControl/
 │   │   ├── auth/          # JWT filter, auth controller, token service
 │   │   ├── config/        # SecurityConfig, OpenAPI config
 │   │   ├── controller/    # REST controllers
@@ -200,7 +206,12 @@ src/
 │       ├── application.properties
 │       └── db/migration/  # Flyway SQL migrations
 └── test/
-    └── java/com/finapk/   # Unit & integration tests
+    ├── java/com/fintech/transactionControl/
+    │   ├── AuthControllerTest.java
+    │   ├── RbacControllerTest.java
+    │   └── FinancialRecordTest.java
+    └── resources/
+        └── application.properties  # H2 config for tests
 ```
 
 ---
