@@ -21,11 +21,26 @@ public class UserRequestDTO {
 
     private String role;
 
+    public UserRequestDTO(){};
+
     public UserRequestDTO(String userName, String password, String email, String role){
         this.username=userName;
         this.email=email;
         this.password=password;
         this.role=role;
+    }
+
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setUsername(String userName) {

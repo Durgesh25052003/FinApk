@@ -3,6 +3,7 @@ package com.fintech.transactionControl.Repo;
 import com.fintech.transactionControl.Projections.CategoryProjection;
 import com.fintech.transactionControl.Projections.MonthlyProjection;
 import com.fintech.transactionControl.entities.FinancialRecord;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface FinRecRepo extends JpaRepository <FinancialRecord,Long>, JpaSpecificationExecutor<FinancialRecord> {
-    List<FinancialRecord> findByUser_Id(Long userId);
+    List<FinancialRecord> findByUser_Id(Long userId, Pageable page);
 
     @Query("""
             SELECT COALESCE(SUM(f.amount))

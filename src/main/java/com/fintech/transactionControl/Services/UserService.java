@@ -1,6 +1,7 @@
 package com.fintech.transactionControl.Services;
 
 import com.fintech.transactionControl.DTOs.UserResponseDTO;
+import com.fintech.transactionControl.Exception.ForbiddenAccess;
 import com.fintech.transactionControl.Repo.RoleRepo;
 import com.fintech.transactionControl.Repo.UserRepo;
 import com.fintech.transactionControl.entities.Role;
@@ -42,8 +43,14 @@ public class UserService {
     }
    public void toggleActiveStatus(long UserId){
         User user = userRepo.findById(UserId).orElseThrow(() -> new UsernameNotFoundException(" User Not found"));
+        if(!user.getActive())throw new ForbiddenAccess("Forbidden Access...");
         user.setActive(!user.getActive());
         userRepo.save(user);
    }
 
+   public void deleteUser(Long id){
+        User user=userRepo.findById(id).orElseThrow(()-> new UsernameNotFoundException("User not Found.."));
+        user.setActive(false);
+        userRepo.save(user);
+   }
 }

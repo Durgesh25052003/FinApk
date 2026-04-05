@@ -33,4 +33,10 @@ public class UserController {
         userService.toggleActiveStatus(id);
         return ResponseEntity.ok("Status updated");
     }
+    //Soft Deleting..
+    @PutMapping("/{id}/delete")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id){
+        userService.deleteUser(id);
+;    }
 }

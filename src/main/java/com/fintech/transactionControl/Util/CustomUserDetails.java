@@ -11,13 +11,15 @@ public class CustomUserDetails implements UserDetails {
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
+    private Boolean isActive;
 
     public CustomUserDetails(Long id, String username, String password,
-                             Collection<? extends GrantedAuthority> authorities) {
+                             Collection<? extends GrantedAuthority> authorities,Boolean isActive) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
+        this.isActive=isActive;
     }
 
     public Long getId() {
@@ -45,5 +47,5 @@ public class CustomUserDetails implements UserDetails {
     public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() { return true; }
+    public boolean isEnabled() { return isActive; };
 }

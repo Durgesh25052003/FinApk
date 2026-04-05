@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Where(clause= "active = true")
 @Data
 @Table(name="financial_records")
 public class FinancialRecord {

@@ -4,6 +4,9 @@ import com.fintech.transactionControl.Projections.CategoryProjection;
 import com.fintech.transactionControl.Repo.FinRecRepo;
 import com.fintech.transactionControl.Util.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,5 +52,10 @@ public class DashboardAPIController {
                         "balance", balance
                 )
         );
+    }
+    @GetMapping("/recent")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'ANALYST' , 'VIEWER')")
+    public ResponseEntity<?>getRecent(@AuthenticationPrincipal CustomUserDetails userDetails , @PageableDefault(size=5,sort="date",direction= Sort.Direction.DESC) Pageable page){
+        return ResponseEntity.ok(finRecRepo.findByUser_Id(userDetails.getId(),page));
     }
 }
