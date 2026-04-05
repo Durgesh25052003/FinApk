@@ -38,5 +38,6 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
+        return ResponseEntity.ok("Record Deleted Sucessfully...")
 ;    }
 }
